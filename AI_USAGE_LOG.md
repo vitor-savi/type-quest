@@ -39,3 +39,28 @@ O uso de IA foi permitido para as seguintes finalidades:
   Arquivo src/config/config.php, da linha 7 até a linha 24.
 
 ---
+
+### Interação 2
+
+- **Data:** 16/06/2026
+- **Etapa do Projeto:** Containerização da aplicação com Docker
+- **Ferramenta de IA Utilizada:** Claude
+- **Objetivo da Consulta:** Eu precisava configurar um ambiente Docker para rodar minha aplicação PHP com Apache e um banco MySQL. Minha principal dificuldade era entender como estruturar corretamente o Dockerfile e o docker-compose.yml e garantir que o projeto rodasse corretamente com o DocumentRoot apontando para a pasta /src. Também tive dúvidas sobre como organizar variáveis de ambiente e volumes para facilitar o desenvolvimento.
+
+- **Prompt(s) Utilizado(s):**
+  Preciso montar um Dockerfile e um docker-compose para uma aplicação PHP com Apache e MySQL.
+  Quero que o Apache use a pasta /src como raiz do projeto.
+  Também preciso configurar dois serviços (app e bd), usar variáveis de ambiente para o banco e mapear a porta do MySQL para 3307 na minha máquina.
+  Quero usar volume para não precisar rebuildar tudo a cada alteração.
+
+- **Resumo da Resposta da IA:**
+  A IA me mostrou um exemplo de Dockerfile usando php:8.2-apache, instalando o PDO MySQL e ativando o mod_rewrite. Também explicou como mudar o DocumentRoot do Apache.
+  No docker-compose, ela sugeriu separar em dois serviços (app e db), usar variáveis de ambiente e volumes, além de configurar o banco para iniciar já com scripts SQL.
+
+- **Análise e Aplicação:**
+  Eu usei a estrutura que a IA sugeriu como base, mas fui ajustando algumas coisas conforme testava, como portas, nomes de variáveis e caminhos.
+
+- **Referência no Código:**
+  Arquivos Dockerfile e docker-compose.yml (configuração dos containers e integração com o banco).
+
+---
