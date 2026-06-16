@@ -1,0 +1,130 @@
+/* =============================================
+   TypeQuest — Estilos das páginas de auth
+   ============================================= */
+
+body.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: var(--bg-primary);
+    /* Padrão de estrelas sutil no fundo */
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 1rem;
+}
+
+/* Logo / cabeçalho da auth */
+.auth-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-logo__icon {
+    font-size: 3rem;
+    color: var(--color-primary);
+    display: block;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 0 16px rgba(124, 58, 237, 0.6));
+}
+
+.auth-logo__name {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.08em;
+}
+
+.auth-logo__tagline {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    letter-spacing: 0.04em;
+}
+
+/* Card do formulário */
+.auth-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow), 0 0 80px rgba(124, 58, 237, 0.08);
+    padding: 2rem;
+}
+
+.auth-card__title {
+    font-family: var(--font-title);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.auth-card__sub {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.75rem;
+}
+
+/* Divider "ou" */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-card);
+}
+
+/* Link inferior (para registro / login) */
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Força de senha */
+.password-strength {
+    margin-top: 0.4rem;
+}
+
+.strength-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 0.25rem;
+}
+
+.strength-bar__segment {
+    flex: 1;
+    height: 3px;
+    background: var(--border-card);
+    border-radius: 2px;
+    transition: var(--transition);
+}
+
+.strength-bar__segment.filled-weak   { background: var(--color-danger); }
+.strength-bar__segment.filled-medium { background: var(--color-accent); }
+.strength-bar__segment.filled-strong { background: var(--color-success); }
+
+.strength-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
