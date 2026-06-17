@@ -1,0 +1,333 @@
+/* =============================================
+   TypeQuest — Estilos do Dashboard e páginas internas
+   ============================================= */
+
+/* Cabeçalho de boas-vindas */
+.welcome-banner {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(245, 158, 11, 0.08));
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: var(--radius);
+    padding: 1.75rem 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.welcome-banner__text h2 {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.welcome-banner__text p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.welcome-banner__level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    min-width: 120px;
+    text-align: center;
+}
+
+.welcome-banner__level .level-num {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--color-accent);
+    line-height: 1;
+}
+
+.welcome-banner__level .level-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-family: var(--font-title);
+}
+
+/* Botão de batalha em destaque */
+.battle-cta {
+    background: linear-gradient(135deg, var(--color-primary), #9333ea);
+    border: none;
+    border-radius: var(--radius);
+    padding: 1.25rem 2.5rem;
+    font-family: var(--font-title);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    box-shadow: 0 4px 24px rgba(124, 58, 237, 0.4);
+}
+
+.battle-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(124, 58, 237, 0.6);
+    color: #fff;
+}
+
+.battle-cta i {
+    font-size: 1.4rem;
+}
+
+/* Cards de estatísticas */
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    border-color: rgba(124, 58, 237, 0.3);
+    transform: translateY(-2px);
+}
+
+.stat-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.stat-card__icon--purple {
+    background: rgba(124, 58, 237, 0.15);
+    color: var(--color-primary);
+}
+
+.stat-card__icon--gold {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--color-accent);
+}
+
+.stat-card__icon--green {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--color-success);
+}
+
+.stat-card__icon--red {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--color-danger);
+}
+
+.stat-card__body {
+    flex: 1;
+}
+
+.stat-card__value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 0.2rem;
+}
+
+.stat-card__label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: var(--font-title);
+}
+
+/* Mini-ranking */
+.mini-ranking {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mini-ranking__item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    background: rgba(15, 14, 23, 0.5);
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    transition: var(--transition);
+}
+
+.mini-ranking__item:hover {
+    border-color: var(--border-card);
+}
+
+.mini-ranking__item--me {
+    border-color: rgba(124, 58, 237, 0.3);
+    background: rgba(124, 58, 237, 0.08);
+}
+
+.mini-ranking__pos {
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: 0.9rem;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.mini-ranking__name {
+    flex: 1;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.mini-ranking__score {
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    font-weight: 600;
+    font-family: var(--font-title);
+}
+
+/* Partidas recentes */
+.recent-match {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(15, 14, 23, 0.5);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-card);
+    transition: var(--transition);
+}
+
+.recent-match:hover {
+    border-color: rgba(124, 58, 237, 0.2);
+}
+
+.recent-match__enemy {
+    font-size: 1.5rem;
+    width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.recent-match__info {
+    flex: 1;
+}
+
+.recent-match__enemy-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.15rem;
+}
+
+.recent-match__date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.recent-match__stats {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Liga card no dashboard */
+.league-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: rgba(15, 14, 23, 0.5);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-card);
+    transition: var(--transition);
+    gap: 0.75rem;
+}
+
+.league-item:hover {
+    border-color: rgba(124, 58, 237, 0.2);
+}
+
+.league-item__name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.league-item__members {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.league-item__score {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    font-family: var(--font-title);
+}
+
+/* Ranking / History table container */
+.section-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.section-card__header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-card);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.section-card__title {
+    font-family: var(--font-title);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-card__body {
+    padding: 1.25rem 1.5rem;
+}
+
+/* Estados de carregamento */
+.skeleton {
+    background: linear-gradient(90deg, var(--border-card) 25%, rgba(22, 33, 62, 0.5) 50%, var(--border-card) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: var(--radius-sm);
+    height: 20px;
+    margin-bottom: 0.5rem;
+}
+
+@keyframes skeleton-loading {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
