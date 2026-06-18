@@ -1,0 +1,265 @@
+/* =============================================
+   TypeQuest — Estilos da Arena de Batalha
+   ============================================= */
+
+body.game-page {
+    padding-top: var(--topbar-height);
+    background: var(--bg-primary);
+}
+
+/* Wrapper da arena */
+.game-arena {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    min-height: calc(100vh - var(--topbar-height));
+    align-items: start;
+}
+
+/* Canvas container */
+.canvas-container {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+#battleCanvas {
+    display: block;
+    width: 100%;
+    border-radius: var(--radius);
+}
+
+/* Overlay de início */
+.start-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 14, 23, 0.92);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    border-radius: var(--radius);
+    z-index: 10;
+}
+
+.start-overlay__enemy-sprite {
+    font-size: 5rem;
+    filter: drop-shadow(0 0 24px rgba(124, 58, 237, 0.5));
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-12px); }
+}
+
+.start-overlay__title {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.start-overlay__info {
+    display: flex;
+    gap: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.start-overlay__info span {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Input de digitação */
+.typing-area {
+    position: relative;
+    margin-top: 1rem;
+}
+
+#typingInput {
+    width: 100%;
+    background: rgba(15, 14, 23, 0.9);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+    letter-spacing: 0.1em;
+    caret-color: transparent; /* Esconde o cursor piscante */
+    transition: var(--transition);
+}
+
+#typingInput:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.3);
+}
+
+#typingInput:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Palavra destacada */
+.word-display {
+    text-align: center;
+    font-family: var(--font-title);
+    font-size: 1rem;
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    letter-spacing: 0.06em;
+}
+
+/* Painel lateral do jogo */
+.game-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Card de HP no painel lateral */
+.hp-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+}
+
+.hp-panel__title {
+    font-family: var(--font-title);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.hp-panel__value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+    line-height: 1;
+}
+
+/* Stats do jogo em tempo real */
+.game-stats-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.game-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.game-stat__label {
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.game-stat__value {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-title);
+}
+
+/* Botão abandonar */
+.abandon-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.abandon-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Modal de resultado */
+.result-modal .modal-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+.result-title {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.result-stat {
+    background: rgba(15, 14, 23, 0.6);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+}
+
+.result-stat__value {
+    font-family: var(--font-title);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.result-stat__label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.25rem;
+}
+
+/* Loading e erro dentro do game */
+.game-message {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    z-index: 5;
+}
