@@ -12,8 +12,9 @@ class Battle {
         this.wordIndex       = 0;
         this.currentWord     = '';
         this.typedCorrect    = 0; // letras digitadas corretamente na palavra atual
-        this.totalAcertos    = 0; // palavras inteiras acertadas
-        this.totalChars      = 0; // total de caracteres digitados
+        this.totalAcertos       = 0; // palavras inteiras acertadas
+        this.totalChars         = 0; // total de caracteres digitados
+        this.totalCharsCorretos = 0; // caracteres digitados corretamente
         this.startTime       = null;
         this.wordStartTime   = null;
         this.pontuacao       = 0;
@@ -103,6 +104,7 @@ class Battle {
         if (char === expected) {
             this.typedCorrect++;
             this.totalChars++;
+            this.totalCharsCorretos++;
 
             if (this.typedCorrect === this.currentWord.length) {
                 // Palavra completa corretamente
@@ -167,8 +169,8 @@ class Battle {
         }
 
         const duracaoSegundos = Math.round((Date.now() - this.startTime) / 1000);
-        const precisao = this.palavras.length > 0
-            ? (this.totalAcertos / this.palavras.length) * 100
+        const precisao = this.totalChars > 0
+            ? (this.totalCharsCorretos / this.totalChars) * 100
             : 0;
 
         const wpm = duracaoSegundos > 0
