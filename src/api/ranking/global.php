@@ -38,7 +38,8 @@ try {
         $stmt->execute();
     } else {
         // Ranking semanal: tabela PONTUACAO_SEMANAL, semana atual
-        $semanaInicio = date('Y-m-d', strtotime('monday this week'));
+        $day = (int)date('N'); // 1=Segunda, 7=Domingo
+        $semanaInicio = date('Y-m-d', strtotime('-' . ($day - 1) . ' days'));
         $stmt = $pdo->prepare(
             'SELECT u.idUsuario, u.nome_usuario,
                     ps.pontuacao,
