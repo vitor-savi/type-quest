@@ -13,8 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $body = json_decode(file_get_contents('php://input'), true);
 
 $nomeUsuario = trim($body['nome_usuario'] ?? '');
-$email       = trim($body['email']       ?? '');
-$senha       = $body['senha']            ?? '';
+$email       = trim($body['email']        ?? '');
+$senha       = trim($body['senha']        ?? '');
 
 // Validações básicas
 if ($nomeUsuario === '' || $email === '' || $senha === '') {
