@@ -101,8 +101,9 @@ try {
     $stmtLigas->execute([':pts' => $pontuacao, ':uid' => $idUsuario]);
 
     // Atualiza ou insere pontuação semanal global
-    $semanaInicio = date('Y-m-d', strtotime('monday this week'));
-    $semanaFim    = date('Y-m-d', strtotime('sunday this week'));
+    $day = (int)date('N'); // 1=Segunda, 7=Domingo
+    $semanaInicio = date('Y-m-d', strtotime('-' . ($day - 1) . ' days'));
+    $semanaFim    = date('Y-m-d', strtotime('+' . (7 - $day) . ' days'));
 
     $stmtPS = $pdo->prepare(
         'INSERT INTO PONTUACAO_SEMANAL
