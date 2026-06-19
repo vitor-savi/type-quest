@@ -156,6 +156,7 @@ class Battle {
     }
 
     _endBattle(forceWinner = null) {
+        if (this.state === 'finished') return;
         clearInterval(this.timerInterval);
         this.state = 'finished';
 
