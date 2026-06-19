@@ -210,6 +210,7 @@ function stopGameLoop() {
 
 /** Desenha a palavra atual no centro com letras coloridas */
 function drawWordCenter(ctx, canvas, battle) {
+    ctx.save();
     const word    = battle.currentWord;
     const typed   = battle.typedCorrect;
     const cx      = canvas.width / 2;
@@ -244,10 +245,12 @@ function drawWordCenter(ctx, canvas, battle) {
 
         x += w;
     }
+    ctx.restore();
 }
 
 /** Barra de tempo decrescente */
 function drawTimeBar(ctx, canvas, battle) {
+    ctx.save();
     const bx = canvas.width * 0.25;
     const by = canvas.height * 0.58;
     const bw = canvas.width * 0.5;
@@ -272,10 +275,12 @@ function drawTimeBar(ctx, canvas, battle) {
         ctx.roundRect(bx, by, fillW, bh, 3);
         ctx.fill();
     }
+    ctx.restore();
 }
 
 /** HUD no topo do canvas */
 function drawHUDCanvas(ctx, canvas, battle) {
+    ctx.save();
     const pad = 16;
     ctx.font = '13px Inter, sans-serif';
     ctx.textBaseline = 'middle';
@@ -301,6 +306,7 @@ function drawHUDCanvas(ctx, canvas, battle) {
     ctx.textAlign = 'right';
     ctx.font = 'bold 13px Cinzel, serif';
     ctx.fillText(`${battle.currentWPM} WPM`, canvas.width - pad - 12, pad + 16);
+    ctx.restore();
 }
 
 /** Atualiza a exibição da palavra atual no input area */
