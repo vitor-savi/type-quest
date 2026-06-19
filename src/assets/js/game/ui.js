@@ -22,11 +22,11 @@ class GameUI {
         const stars = [];
         for (let i = 0; i < count; i++) {
             stars.push({
-                x:    Math.random() * this.canvas.width,
-                y:    Math.random() * this.canvas.height,
-                r:    Math.random() * 1.5 + 0.3,
-                a:    Math.random(),
-                da:   (Math.random() * 0.01 + 0.003) * (Math.random() < 0.5 ? 1 : -1),
+                x:  Math.random(), // normalizado 0-1
+                y:  Math.random(), // normalizado 0-1
+                r:  Math.random() * 1.5 + 0.3,
+                a:  Math.random(),
+                da: (Math.random() * 0.01 + 0.003) * (Math.random() < 0.5 ? 1 : -1),
             });
         }
         return stars;
@@ -64,6 +64,7 @@ class GameUI {
     /** Desenha o fundo estrelado com gradiente */
     drawBackground() {
         const { ctx, canvas } = this;
+        ctx.save();
         const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
         grad.addColorStop(0, '#0f0e17');
         grad.addColorStop(1, '#1a1a2e');
@@ -72,17 +73,19 @@ class GameUI {
 
         for (const s of this.stars) {
             ctx.beginPath();
-            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(226,224,255,${s.a * 0.6})`;
             ctx.fill();
         }
+        ctx.restore();
     }
 
     /** Desenha a barra de HP de um combatente */
     drawHPBar(x, y, width, height, percent, colors) {
         const { ctx } = this;
-
+        ctx.save();
         ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.beginPath();
         ctx.roundRect(x, y, width, height, height / 2);
         ctx.fill();
 
@@ -96,66 +99,78 @@ class GameUI {
             ctx.roundRect(x, y, fillWidth, height, height / 2);
             ctx.fill();
         }
+        ctx.restore();
     }
 
     /** Desenha o sprite (emoji) de um combatente no canvas */
     drawSprite(emoji, x, y, size = 64) {
         const { ctx } = this;
+        ctx.save();
         ctx.font = `${size}px serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(emoji, x, y);
+        ctx.restore();
     }
 
     /** Texto com fonte Cinzel */
     drawTitle(text, x, y, size, color, align = 'center') {
         const { ctx } = this;
+        ctx.save();
         ctx.font = `bold ${size}px 'Cinzel', serif`;
         ctx.fillStyle = color;
         ctx.textAlign = align;
         ctx.textBaseline = 'middle';
         ctx.fillText(text, x, y);
+        ctx.restore();
     }
 
     /** Texto com fonte Inter */
     drawText(text, x, y, size, color, align = 'center') {
         const { ctx } = this;
+        ctx.save();
         ctx.font = `${size}px 'Inter', sans-serif`;
         ctx.fillStyle = color;
         ctx.textAlign = align;
         ctx.textBaseline = 'middle';
         ctx.fillText(text, x, y);
+        ctx.restore();
     }
 
     /** Desenha o flash de dano/acerto na tela inteira */
     drawFlash() {
         if (this.flashAlpha <= 0) return;
+        this.ctx.save();
         this.ctx.fillStyle = `${this.flashColor}${this.flashAlpha.toFixed(2)})`;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.restore();
     }
 
     /** Desenha os números flutuantes de dano */
     drawFloatingNumbers() {
         const { ctx } = this;
-        for (const n of this.floatingNumbers) {
-            ctx.globalAlpha = n.alpha;
-            ctx.font = 'bold 22px Inter, sans-serif';
-            ctx.fillStyle = n.color;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            // Sombra para legibilidade
-            ctx.shadowColor = 'rgba(0,0,0,0.8)';
-            ctx.shadowBlur  = 4;
-            ctx.fillText(n.text, n.x, n.y);
-            ctx.shadowBlur  = 0;
+        ctx.save();
+        try {
+            for (const n of this.floatingNumbers) {
+                ctx.globalAlpha = n.alpha;
+                ctx.font = 'bold 22px Inter, sans-serif';
+                ctx.fillStyle = n.color;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.shadowBlur  = 4;
+                ctx.fillText(n.text, n.x, n.y);
+                ctx.shadowBlur  = 0;
+            }
+        } finally {
+            ctx.restore();
         }
-        ctx.globalAlpha = 1;
     }
 
     /** Linha divisória central (decorativa) */
     drawDivider() {
         const { ctx, canvas } = this;
+        ctx.save();
         const cx = canvas.width / 2;
         ctx.strokeStyle = 'rgba(124,58,237,0.3)';
         ctx.lineWidth   = 1;
@@ -164,6 +179,6 @@ class GameUI {
         ctx.moveTo(cx, 20);
         ctx.lineTo(cx, canvas.height - 20);
         ctx.stroke();
-        ctx.setLineDash([]);
+        ctx.restore();
     }
 }
