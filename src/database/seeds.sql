@@ -1,4 +1,5 @@
 USE typequest;
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Inimigos em ordem crescente de dificuldade
 INSERT INTO INIMIGO (nome, sprite, nivel_minimo, hp, dano_base, tipo) VALUES
