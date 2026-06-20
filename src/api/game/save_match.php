@@ -105,18 +105,24 @@ try {
     $semanaInicio = date('Y-m-d', strtotime('-' . ($day - 1) . ' days'));
     $semanaFim    = date('Y-m-d', strtotime('+' . (7 - $day) . ' days'));
 
-    $stmtPS = $pdo->prepare(
-        'INSERT INTO PONTUACAO_SEMANAL
-            (FK_USUARIO_idUsuario, FK_LIGA_idLiga, pontuacao, semana_inicio, semana_fim)
-         VALUES (:uid, NULL, :pts, :ini, :fim)
-         ON DUPLICATE KEY UPDATE pontuacao = pontuacao + VALUES(pontuacao)'
+    // ON DUPLICATE KEY UPDATE não funciona com FK_LIGA_idLiga IS NULL porque MySQL
+    // trata NULL != NULL em UNIQUE constraints. Usamos SELECT + UPDATE/INSERT explícito.
+    $stmtPSCheck = $pdo->prepare(
+        'SELECT idPontuacao FROM PONTUACAO_SEMANAL
+         WHERE FK_USUARIO_idUsuario = :uid AND FK_LIGA_idLiga IS NULL AND semana_inicio = :ini'
     );
-    $stmtPS->execute([
-        ':uid' => $idUsuario,
-        ':pts' => $pontuacao,
-        ':ini' => $semanaInicio,
-        ':fim' => $semanaFim,
-    ]);
+    $stmtPSCheck->execute([':uid' => $idUsuario, ':ini' => $semanaInicio]);
+    $idPS = $stmtPSCheck->fetchColumn();
+
+    if ($idPS) {
+        $pdo->prepare('UPDATE PONTUACAO_SEMANAL SET pontuacao = pontuacao + :pts WHERE idPontuacao = :id')
+            ->execute([':pts' => $pontuacao, ':id' => $idPS]);
+    } else {
+        $pdo->prepare(
+            'INSERT INTO PONTUACAO_SEMANAL (FK_USUARIO_idUsuario, FK_LIGA_idLiga, pontuacao, semana_inicio, semana_fim)
+             VALUES (:uid, NULL, :pts, :ini, :fim)'
+        )->execute([':uid' => $idUsuario, ':pts' => $pontuacao, ':ini' => $semanaInicio, ':fim' => $semanaFim]);
+    }
 
     $pdo->commit();
 

@@ -42,7 +42,7 @@ try {
         $semanaInicio = date('Y-m-d', strtotime('-' . ($day - 1) . ' days'));
         $stmt = $pdo->prepare(
             'SELECT u.idUsuario, u.nome_usuario,
-                    ps.pontuacao,
+                    SUM(ps.pontuacao) AS pontuacao,
                     COALESCE(
                         (SELECT AVG(p2.wpm) FROM PARTIDA p2
                          WHERE p2.FK_USUARIO_idUsuario = u.idUsuario
@@ -56,7 +56,8 @@ try {
              JOIN USUARIO u ON u.idUsuario = ps.FK_USUARIO_idUsuario
              WHERE ps.FK_LIGA_idLiga IS NULL
                AND ps.semana_inicio = :ini3
-             ORDER BY ps.pontuacao DESC
+             GROUP BY u.idUsuario, u.nome_usuario
+             ORDER BY pontuacao DESC
              LIMIT :lim'
         );
         $stmt->bindValue(':ini',  $semanaInicio);
