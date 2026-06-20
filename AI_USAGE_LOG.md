@@ -64,3 +64,32 @@ O uso de IA foi permitido para as seguintes finalidades:
   Arquivos Dockerfile e docker-compose.yml (configuração dos containers e integração com o banco).
 
 ---
+
+### Interação 3
+
+- **Data:** 20/06/2026
+- **Etapa do Projeto:** Correção na exibição das ligas
+- **Ferramenta de IA Utilizada:** Claude
+- **Objetivo da Consulta:** Toda vez que eu acessava a tela de Liguas, ele sempre caia na exceção e trazia a mensagem "empty.textContent = 'Erro ao carregar ligas.';"". Eu tentei localizar o erro melhorando a captura de logs, porém mesmo assim ele não retornava nada, então pedi ajuda para o Claude.
+
+- **Prompt(s) Utilizado(s):**
+  Preciso de ajuda para corrigir a exibição na tela de Ligas.
+
+  Independente de eu estar em uma liga ou não, ele sempre retorna o erro "Erro ao carregar ligas", conforme anexo. Eu já melhorei o tratamento de erros na API de ligas, usando o catch \Throuwable em vez de apenas PDOExcepcion para tentar exibir a mensagem real do erro, mas mesmo assim continua com o mesmo problema. O que pode ser?
+
+  Além disso, eu capturei alguns logs no docker rodando o comando docker compose logs app --tail=30 e trouxe todos os resultados abaixo, aparentemente não está nem fazendo o fetch(), mas me corrija se eu estiver errado.
+
+- **Resumo da Resposta da IA:**
+  A IA confirmou a minha suspeita e disse o seguinte: Olhando os logs, a request para /api/leagues/list.php nunca chegou ao servidor. Isso significa que o fetch() nunca foi chamado — o JavaScript lançou uma exceção antes disso.
+
+  A causa: o loadLeagues() está no HTML antes de main.js ser carregado (que é incluído pelo footer.php). Quando loadLeagues() chama apiFetch(...), essa função ainda não existe, gerando ReferenceError: apiFetch is not defined — capturado pelo catch, que exibe "Erro ao carregar ligas."
+
+  O fix é carregar main.js no <head> para que apiFetch exista antes de qualquer script inline da página:
+
+- **Análise e Aplicação:**
+  Fiz as alterações sugeridas pela IA, adicionei o main.js no head para ficar disponível nos scripts inline e removi a chamada ao main.js que estava no footer.php, pois se não chamaria duas vezes.
+
+- **Referência no Código:**
+  Arquivos header.php e footer.php.
+
+---
