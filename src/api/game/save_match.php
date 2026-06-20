@@ -94,11 +94,11 @@ try {
     // Atualiza pontuações nas ligas do usuário
     $stmtLigas = $pdo->prepare(
         'UPDATE USUARIO_LIGA
-         SET pontuacao_total   = pontuacao_total   + :pts,
-             pontuacao_semanal = pontuacao_semanal + :pts
+         SET pontuacao_total   = pontuacao_total   + :pts1,
+             pontuacao_semanal = pontuacao_semanal + :pts2
          WHERE FK_USUARIO_idUsuario = :uid'
     );
-    $stmtLigas->execute([':pts' => $pontuacao, ':uid' => $idUsuario]);
+    $stmtLigas->execute([':pts1' => $pontuacao, ':pts2' => $pontuacao, ':uid' => $idUsuario]);
 
     // Atualiza ou insere pontuação semanal global
     $day = (int)date('N'); // 1=Segunda, 7=Domingo
@@ -125,10 +125,13 @@ try {
     $stmtPtTotal->execute([':id' => $idUsuario]);
     $pontuacaoTotal = (int)$stmtPtTotal->fetchColumn();
 
-    echo json_encode(['success' => true, 'pontuacao_total' => $pontuacaoTotal]);
+    $nivelNovo = min(NIVEL_MAXIMO_JOGADOR, 1 + (int)floor(($totalPartidas + 1) / PARTIDAS_POR_NIVEL));
 
-} catch (PDOException $e) {
-    if ($pdo->inTransaction()) $pdo->rollBack();
+    echo json_encode(['success' => true, 'pontuacao_total' => $pontuacaoTotal, 'nivel_novo' => $nivelNovo]);
+
+} catch (\Throwable $e) {
+    if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
+    error_log('save_match.php error: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erro ao salvar partida.']);
+    echo json_encode(['success' => false, 'message' => 'Erro ao salvar partida: ' . $e->getMessage()]);
 }
