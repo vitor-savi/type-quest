@@ -3,6 +3,9 @@
  * Motor principal do jogo: loop de renderização Canvas + coordenação geral
  */
 
+// Resultado da última batalha — preenchido pelo onFinish, usado pelos botões
+let lastBattleResult = null;
+
 // Estado global da sessão de jogo
 let gameState = {
     canvas:   null,
@@ -134,7 +137,8 @@ function startBattle() {
 
     gameState.battle.onFinish = (result) => {
         stopGameLoop();
-        saveAndShowResult(result);
+        lastBattleResult = result;
+        showResultModal(result);
     };
 
     gameState.battle.start();
@@ -351,43 +355,143 @@ function showGameError(msg) {
     }
 }
 
-/** Salva o resultado da partida e exibe modal */
-async function saveAndShowResult(result) {
-    // Desabilita input
-    const input = document.getElementById('typingInput');
-    if (input) input.disabled = true;
-
-    try {
-        const data = await apiFetch('/api/game/save_match.php', {
-            idInimigo:        gameState.inimigo.idInimigo,
-            pontuacao:        result.pontuacao,
-            wpm:              result.wpm,
-            precisao:         result.precisao,
-            resultado:        result.winner === 'player' ? 'vitoria' : 'derrota',
-            duracao_segundos: result.duracaoSegundos,
-            palavras:         result.palavras,
-        });
-
-        showResultModal(result, data.pontuacao_total || 0);
-    } catch (err) {
-        showResultModal(result, 0);
-    }
-}
-
-/** Exibe modal de resultado */
-function showResultModal(result, pontuacaoTotal) {
+/** Exibe modal de resultado sem salvar — o save ocorre nos botões */
+function showResultModal(result) {
     const isVictory = result.winner === 'player';
     const modal     = document.getElementById('resultModal');
 
-    document.getElementById('resultTitle').textContent   = isVictory ? '⚔️ Vitória!' : '💀 Derrota!';
-    document.getElementById('resultTitle').style.color   = isVictory ? '#10b981' : '#ef4444';
-    document.getElementById('resultWPM').textContent     = result.wpm;
+    // Reseta estado dos botões (podem estar desabilitados de uma rodada anterior)
+    ['btnJogarNovamente', 'btnProximaFase', 'btnDashboard'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) setButtonLoading(el, false);
+    });
+
+    document.getElementById('resultTitle').textContent    = isVictory ? '⚔️ Vitória!' : '💀 Derrota!';
+    document.getElementById('resultTitle').style.color    = isVictory ? '#10b981' : '#ef4444';
+    document.getElementById('resultWPM').textContent      = result.wpm;
     document.getElementById('resultPrecisao').textContent = result.precisao.toFixed(1) + '%';
     document.getElementById('resultPontuacao').textContent = formatNumber(result.pontuacao);
-    document.getElementById('resultTotal').textContent   = formatNumber(pontuacaoTotal);
+    document.getElementById('resultTotal').textContent    = '—';
+
+    // "Próxima Fase" só aparece na vitória
+    const btnProxima = document.getElementById('btnProximaFase');
+    if (btnProxima) btnProxima.classList.toggle('d-none', !isVictory);
 
     const bsModal = new bootstrap.Modal(modal);
     bsModal.show();
+}
+
+/** Envia o resultado da partida para o servidor */
+async function saveMatchAsync(resultado) {
+    if (!lastBattleResult) return null;
+    const input = document.getElementById('typingInput');
+    if (input) input.disabled = true;
+    try {
+        const data = await apiFetch('/api/game/save_match.php', {
+            idInimigo:        gameState.inimigo.idInimigo,
+            pontuacao:        lastBattleResult.pontuacao,
+            wpm:              lastBattleResult.wpm,
+            precisao:         lastBattleResult.precisao,
+            resultado,
+            duracao_segundos: lastBattleResult.duracaoSegundos,
+            palavras:         lastBattleResult.palavras,
+        });
+        return data;
+    } catch (err) {
+        return null;
+    }
+}
+
+/** Reinicia a batalha contra o mesmo inimigo, sem salvar */
+function restartBattleInPlace() {
+    stopGameLoop();
+    lastBattleResult = null;
+
+    gameState.player = new Player(gameState.nomeUsuario, gameState.nivel);
+    gameState.enemy  = new Enemy(gameState.inimigo);
+    gameState.ui     = new GameUI(gameState.ctx, gameState.canvas);
+
+    const input = document.getElementById('typingInput');
+    if (input) { input.disabled = true; input.value = ''; input.placeholder = 'Aguardando início...'; }
+
+    const hudPts = document.getElementById('hudPontuacao');
+    if (hudPts) hudPts.textContent = '0';
+    const hudWpm = document.getElementById('hudWPM');
+    if (hudWpm) hudWpm.textContent = '0';
+
+    updateHPBars();
+    showStartScreen();
+}
+
+/** Carrega uma nova batalha com novo inimigo do servidor */
+async function loadNewBattle() {
+    showGameLoading(true);
+    try {
+        const resp = await fetch(`/api/game/get_words.php?nivel=${gameState.nivel}&quantidade=10`);
+        const data = await resp.json();
+        if (!data.success) { showGameError('Erro ao carregar nova fase.'); return; }
+
+        lastBattleResult   = null;
+        gameState.palavras = data.palavras;
+        gameState.inimigo  = data.inimigo;
+        gameState.player   = new Player(gameState.nomeUsuario, gameState.nivel);
+        gameState.enemy    = new Enemy(gameState.inimigo);
+        gameState.ui       = new GameUI(gameState.ctx, gameState.canvas);
+
+        const input = document.getElementById('typingInput');
+        if (input) { input.disabled = true; input.value = ''; }
+
+        showGameLoading(false);
+        showStartScreen();
+    } catch (err) {
+        showGameError('Falha ao carregar nova fase. Recarregue a página.');
+    }
+}
+
+/** Botão Jogar Novamente — reinicia contra o mesmo inimigo, sem salvar */
+function btnClickJogarNovamente() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('resultModal'));
+    if (modal) modal.hide();
+    setTimeout(restartBattleInPlace, 350);
+}
+
+/** Botão Próxima Fase — salva vitória e carrega novo inimigo */
+async function btnClickProximaFase() {
+    const btn = document.getElementById('btnProximaFase');
+    setButtonLoading(btn, true);
+
+    const data = await saveMatchAsync('vitoria');
+
+    if (!data || !data.success) {
+        showToast('Erro ao salvar partida. Tente novamente.', 'error');
+        setButtonLoading(btn, false);
+        return;
+    }
+
+    document.getElementById('resultTotal').textContent = formatNumber(data.pontuacao_total || 0);
+    if (data.nivel_novo) gameState.nivel = data.nivel_novo;
+
+    setButtonLoading(btn, false);
+    const modal = bootstrap.Modal.getInstance(document.getElementById('resultModal'));
+    if (modal) modal.hide();
+    setTimeout(loadNewBattle, 350);
+}
+
+/** Botão Dashboard — salva (vitória ou derrota) e redireciona */
+async function btnClickDashboard() {
+    const btn = document.getElementById('btnDashboard');
+    setButtonLoading(btn, true);
+
+    const resultado = (lastBattleResult && lastBattleResult.winner === 'player') ? 'vitoria' : 'derrota';
+    const data = await saveMatchAsync(resultado);
+
+    if (!data || !data.success) {
+        showToast('Erro ao salvar partida. Tente novamente.', 'error');
+        setButtonLoading(btn, false);
+        return;
+    }
+
+    window.location.href = '/pages/dashboard.php';
 }
 
 // Listener do input de digitação
