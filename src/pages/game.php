@@ -164,12 +164,15 @@ $pageJs      = [
                 </div>
 
                 <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
-                    <a href="/pages/game.php" class="btn-quest btn-quest--primary">
+                    <button class="btn-quest btn-quest--primary" id="btnJogarNovamente" onclick="btnClickJogarNovamente()">
                         <i class="bi bi-arrow-repeat"></i> Jogar Novamente
-                    </a>
-                    <a href="/pages/dashboard.php" class="btn-quest btn-quest--ghost">
+                    </button>
+                    <button class="btn-quest btn-quest--accent d-none" id="btnProximaFase" onclick="btnClickProximaFase()">
+                        <i class="bi bi-arrow-right-circle-fill"></i> Próxima Fase
+                    </button>
+                    <button class="btn-quest btn-quest--ghost" id="btnDashboard" onclick="btnClickDashboard()">
                         <i class="bi bi-house-fill"></i> Dashboard
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
