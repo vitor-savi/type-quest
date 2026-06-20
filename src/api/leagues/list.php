@@ -52,7 +52,8 @@ try {
 
     echo json_encode(['success' => true, 'ligas' => $ligas]);
 
-} catch (PDOException $e) {
+} catch (\Throwable $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erro ao listar ligas.']);
+    error_log('leagues/list.php: ' . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Erro ao listar ligas: ' . $e->getMessage()]);
 }

@@ -33,5 +33,8 @@ $bodyClass  = $bodyClass  ?? '';
     <?php foreach ($pageCss as $css): ?>
     <link rel="stylesheet" href="<?= WEB_BASE . htmlspecialchars($css) ?>">
     <?php endforeach; ?>
+
+    <!-- main.js carregado no <head> para estar disponível nos scripts inline das páginas -->
+    <script src="<?= WEB_BASE ?>/assets/js/main.js"></script>
 </head>
 <body class="<?= htmlspecialchars($bodyClass) ?>">

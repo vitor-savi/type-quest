@@ -131,7 +131,13 @@ async function loadLeagues() {
         const data = await apiFetch('/api/leagues/list.php', null, 'GET');
         loading.classList.add('d-none');
 
-        if (!data.success || data.ligas.length === 0) {
+        if (!data.success) {
+            empty.textContent = data.message || 'Erro ao carregar ligas.';
+            empty.classList.remove('d-none');
+            return;
+        }
+
+        if (data.ligas.length === 0) {
             empty.classList.remove('d-none');
             return;
         }
