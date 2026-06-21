@@ -90,6 +90,7 @@ function startBattle() {
 
     const input = document.getElementById('typingInput');
     if (input) {
+        input.value    = '';
         input.disabled = false;
         input.focus();
     }
@@ -500,8 +501,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typingInput) {
         typingInput.addEventListener('input', (e) => {
             if (!gameState.battle || gameState.battle.state !== 'running') return;
-            const chars = e.target.value;
-            for (const char of chars) {
+            if (e.isComposing) return; // ignora composição IME em andamento
+            const char = e.data;       // apenas o caractere inserido neste evento
+            if (char && char.length === 1) {
                 gameState.battle.processInput(char);
             }
             e.target.value = '';
