@@ -18,7 +18,8 @@ let gameState = {
     nivel:    1,
     animFrame: null,
     inimigo:  null,
-    nomeUsuario: '',
+    nomeUsuario:    '',
+    totalPontuacao: 0,
 };
 
 /** Inicializa o canvas e carrega dados da API */
@@ -36,8 +37,9 @@ async function initGame() {
     try {
         // Busca nível do jogador via data-attribute do PHP
         const dataEl = document.getElementById('gameData');
-        gameState.nivel       = parseInt(dataEl.dataset.nivel)        || 1;
-        gameState.nomeUsuario = dataEl.dataset.nomeUsuario            || 'Herói';
+        gameState.nivel          = parseInt(dataEl.dataset.nivel)          || 1;
+        gameState.nomeUsuario    = dataEl.dataset.nomeUsuario             || 'Herói';
+        gameState.totalPontuacao = parseInt(dataEl.dataset.totalPontuacao) || 0;
 
         const resp = await fetch(`/api/game/get_words.php?nivel=${gameState.nivel}&quantidade=10`);
         const data = await resp.json();
@@ -90,6 +92,7 @@ function startBattle() {
 
     const input = document.getElementById('typingInput');
     if (input) {
+        input.value    = '';
         input.disabled = false;
         input.focus();
     }
@@ -371,7 +374,7 @@ function showResultModal(result) {
     document.getElementById('resultWPM').textContent      = result.wpm;
     document.getElementById('resultPrecisao').textContent = result.precisao.toFixed(1) + '%';
     document.getElementById('resultPontuacao').textContent = formatNumber(result.pontuacao);
-    document.getElementById('resultTotal').textContent    = '—';
+    document.getElementById('resultTotal').textContent    = formatNumber(gameState.totalPontuacao + result.pontuacao);
 
     // "Próxima Fase" só aparece na vitória
     const btnProxima = document.getElementById('btnProximaFase');
@@ -468,7 +471,8 @@ async function btnClickProximaFase() {
         return;
     }
 
-    document.getElementById('resultTotal').textContent = formatNumber(data.pontuacao_total || 0);
+    gameState.totalPontuacao = data.pontuacao_total || 0;
+    document.getElementById('resultTotal').textContent = formatNumber(gameState.totalPontuacao);
     if (data.nivel_novo) gameState.nivel = data.nivel_novo;
 
     setButtonLoading(btn, false);
@@ -491,6 +495,7 @@ async function btnClickDashboard() {
         return;
     }
 
+    gameState.totalPontuacao = data.pontuacao_total || 0;
     window.location.href = '/pages/dashboard.php';
 }
 
@@ -500,9 +505,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typingInput) {
         typingInput.addEventListener('input', (e) => {
             if (!gameState.battle || gameState.battle.state !== 'running') return;
-            const chars = e.target.value;
-            for (const char of chars) {
-                gameState.battle.processInput(char);
+            if (e.isComposing) return; // ignora composição IME em andamento
+            const char = e.data;       // apenas o caractere inserido neste evento
+            if (char && char.length === 1) {
+                gameState.battle.processInput(char.toLowerCase());
             }
             e.target.value = '';
         });

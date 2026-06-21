@@ -58,7 +58,7 @@ cd type-quest
 copy .env.example .env
 
 # 3. Suba os containers (na primeira vez baixa as imagens e inicializa o banco)
-docker-compose up --build
+docker compose up --build
 
 # 4. Acesse no navegador
 # http://localhost:8080

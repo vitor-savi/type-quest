@@ -21,6 +21,13 @@ $stmtNivel->execute([':id' => $idUsuario]);
 $totalPartidas = (int)$stmtNivel->fetchColumn();
 $nivel = min(NIVEL_MAXIMO_JOGADOR, 1 + (int)floor($totalPartidas / PARTIDAS_POR_NIVEL));
 
+// Total de pontos acumulados (exibido no modal de resultado antes do save)
+    // Foi necessário fazer isso pois o valor só aparecia após clicar no "Próxima Fase" ou "Dashboard"
+    // Agora ele faz um select no banco e traz o valor atual, e então atualiza após o save
+$stmtTotal = $pdo->prepare('SELECT COALESCE(SUM(pontuacao), 0) FROM PARTIDA WHERE FK_USUARIO_idUsuario = :id');
+$stmtTotal->execute([':id' => $idUsuario]);
+$totalPontuacao = (int)$stmtTotal->fetchColumn();
+
 $pageTitle   = 'Batalha';
 $bodyClass   = 'game-page';
 $currentPage = 'game';
@@ -40,6 +47,7 @@ $pageJs      = [
 <div id="gameData"
      data-nivel="<?= $nivel ?>"
      data-nome-usuario="<?= htmlspecialchars($usuario['nome_usuario']) ?>"
+     data-total-pontuacao="<?= $totalPontuacao ?>"
      style="display:none;"></div>
 
 <div class="game-arena">
