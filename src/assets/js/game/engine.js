@@ -18,7 +18,8 @@ let gameState = {
     nivel:    1,
     animFrame: null,
     inimigo:  null,
-    nomeUsuario: '',
+    nomeUsuario:    '',
+    totalPontuacao: 0,
 };
 
 /** Inicializa o canvas e carrega dados da API */
@@ -36,8 +37,9 @@ async function initGame() {
     try {
         // Busca nível do jogador via data-attribute do PHP
         const dataEl = document.getElementById('gameData');
-        gameState.nivel       = parseInt(dataEl.dataset.nivel)        || 1;
-        gameState.nomeUsuario = dataEl.dataset.nomeUsuario            || 'Herói';
+        gameState.nivel          = parseInt(dataEl.dataset.nivel)          || 1;
+        gameState.nomeUsuario    = dataEl.dataset.nomeUsuario             || 'Herói';
+        gameState.totalPontuacao = parseInt(dataEl.dataset.totalPontuacao) || 0;
 
         const resp = await fetch(`/api/game/get_words.php?nivel=${gameState.nivel}&quantidade=10`);
         const data = await resp.json();
@@ -372,7 +374,7 @@ function showResultModal(result) {
     document.getElementById('resultWPM').textContent      = result.wpm;
     document.getElementById('resultPrecisao').textContent = result.precisao.toFixed(1) + '%';
     document.getElementById('resultPontuacao').textContent = formatNumber(result.pontuacao);
-    document.getElementById('resultTotal').textContent    = '—';
+    document.getElementById('resultTotal').textContent    = formatNumber(gameState.totalPontuacao + result.pontuacao);
 
     // "Próxima Fase" só aparece na vitória
     const btnProxima = document.getElementById('btnProximaFase');
@@ -469,7 +471,8 @@ async function btnClickProximaFase() {
         return;
     }
 
-    document.getElementById('resultTotal').textContent = formatNumber(data.pontuacao_total || 0);
+    gameState.totalPontuacao = data.pontuacao_total || 0;
+    document.getElementById('resultTotal').textContent = formatNumber(gameState.totalPontuacao);
     if (data.nivel_novo) gameState.nivel = data.nivel_novo;
 
     setButtonLoading(btn, false);
@@ -492,6 +495,7 @@ async function btnClickDashboard() {
         return;
     }
 
+    gameState.totalPontuacao = data.pontuacao_total || 0;
     window.location.href = '/pages/dashboard.php';
 }
 
