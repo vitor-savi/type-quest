@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.isComposing) return; // ignora composição IME em andamento
             const char = e.data;       // apenas o caractere inserido neste evento
             if (char && char.length === 1) {
-                gameState.battle.processInput(char);
+                gameState.battle.processInput(char.toLowerCase());
             }
             e.target.value = '';
         });
