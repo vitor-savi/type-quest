@@ -93,3 +93,24 @@ O uso de IA foi permitido para as seguintes finalidades:
   Arquivos header.php e footer.php.
 
 ---
+
+### Interação 4
+
+- **Data:** 20/06/2026
+- **Etapa do Projeto:** Correção do bug intermitente de digitação sempre marcada como errada
+- **Ferramenta de IA Utilizada:** Claude
+- **Objetivo da Consulta:** Após F5 ou logout e re-login, toda letra digitada pelo jogador era marcada como errada independentemente do que fosse digitado, tornando a partida impossível de vencer. O bug era intermitente (nem sempre acontecia) e não gerava nenhum erro no console do navegador, o que dificultava o diagnóstico.
+
+- **Prompt(s) Utilizado(s):**
+  Prompt de investigação detalhado descrevendo o bug intermitente: ao jogar pela primeira vez o jogo funcionava normalmente, mas após F5 ou logout/re-login toda digitação era marcada como errada. O prompt levantava a hipótese principal de race condition ou problema de timing assíncrono no JavaScript, e listava pontos específicos de investigação: possível listener registrado em duplicidade, variável de estado não inicializada no momento da captura de input, comparação case-sensitive incorreta e possível vazamento de estado via localStorage/sessionStorage.
+
+- **Resumo da Resposta da IA:**
+  A IA identificou que o listener de input lia e.target.value (o conteúdo total do campo de texto no momento do evento) em vez de e.data (apenas o caractere inserido naquele evento específico). Após F5, alguns navegadores restauram silenciosamente o valor de campos de formulário quando eles são habilitados via JavaScript. Quando startBattle() chamava input.disabled = false, o campo exibia o valor que havia sido digitado na sessão anterior. No primeiro evento de input da nova partida, e.target.value continha [valor_restaurado + nova_tecla], fazendo o loop for...of processar todos os caracteres acumulados de uma vez — cada um disparando um ataque inimigo e resetando o typedCorrect para zero. A IA corrigiu trocando para e.data, adicionando verificação de e.isComposing para ignorar composição IME, e adicionando input.value = '' explicitamente no início de startBattle().
+
+- **Análise e Aplicação:**
+  A correção faz sentido: e.data é a API semanticamente correta para obter o caractere digitado em um evento de input, enquanto e.target.value retorna o estado atual do campo, que pode conter caracteres acumulados de outras fontes. Apliquei as três mudanças sugeridas no engine.js.
+
+- **Referência no Código:**
+  Arquivo engine.js: istener do evento input do campo de digitação (substituição de e.target.value por e.data, adição de e.isComposing e limpeza de input.value em startBattle()).
+
+---
