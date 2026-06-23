@@ -36,7 +36,7 @@ O uso de IA foi permitido para as seguintes finalidades:
   A resposta da IA foi muito boa e optei por implementar a ideia dela no arquivo config.php.
 
 - **Referência no Código:**
-  Arquivo src/config/config.php, da linha 7 até a linha 24.
+  Arquivo src/config/config.php.
 
 ---
 
