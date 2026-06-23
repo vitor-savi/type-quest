@@ -97,10 +97,35 @@ DB_NAME=typequest
 DB_USER=root
 DB_PASS=
 ```
+4. Abra o arquivo
+```
+C:\xampp\apache\conf\extra\httpd-vhosts.conf
+```
+E adicione o código abaixo no final do arquivo:
+```apache
+<VirtualHost *:80>
+    ServerName typequest.local
+    DocumentRoot "C:/xampp/htdocs/type-quest"
 
-3. Inicie o Apache e o MySQL no XAMPP Control Panel.
+    <Directory "C:/xampp/htdocs/type-quest">
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
 
-4. Importe o schema e os seeds. Importante: `schema.sql` já cria o banco `typequest` e define `USE typequest`, então basta importar o arquivo do schema; em seguida importe os seeds.
+5. Abra o arquivo como administrador (OBS: Precisa estar como administrador):
+```
+C:\Windows\System32\drivers\etc\hosts
+```
+E então adicione o seguinte ao final do arquivo:
+```
+127.0.0.1   typequest.local
+```
+
+6. Inicie o Apache e o MySQL no XAMPP Control Panel.
+
+7. Importe o schema e os seeds. Importante: `schema.sql` já cria o banco `typequest` e define `USE typequest`, então basta importar o arquivo do schema; em seguida importe os seeds.
 
 ```powershell
 # Importa o schema (cria o banco e as tabelas)
@@ -109,12 +134,12 @@ mysql -u root -p < "C:\xampp\htdocs\type-quest\database\schema.sql"
 mysql -u root -p typequest < "C:\xampp\htdocs\type-quest\database\seeds.sql"
 ```
 
-5. Verifique no `php.ini` (geralmente `C:\xampp\php\php.ini`) que a extensão `pdo_mysql` está habilitada; reinicie o Apache após qualquer alteração.
+8. Verifique no `php.ini` (geralmente `C:\xampp\php\php.ini`) que a extensão `pdo_mysql` está habilitada; reinicie o Apache após qualquer alteração.
 
-6. Acesse no navegador:
+9. Acesse no navegador:
 
 ```
-http://localhost/type-quest/
+http://localhost/
 ```
 
 O arquivo `src/config/config.php` carrega variáveis do `.env` quando o ambiente não é Docker, portanto é essencial que o `.env` esteja na raiz onde você colocou os arquivos no `htdocs`.
