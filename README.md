@@ -69,18 +69,55 @@ Para parar: `docker-compose down`
 
 ### Com XAMPP (Windows)
 
-**Pré-requisitos:** XAMPP com PHP 8.2+ e MySQL instalado.
+**Pré-requisitos:** XAMPP com PHP 8.2+ e MySQL, extensão `pdo_mysql` habilitada.
 
-1. Copie a pasta `src/` para dentro de `C:\xampp\htdocs\type-quest\`
-2. Inicie o Apache e o MySQL no XAMPP Control Panel
-3. Abra o MySQL e execute os scripts:
-   ```sql
-   source C:/xampp/htdocs/type-quest/database/schema.sql
-   source C:/xampp/htdocs/type-quest/database/seeds.sql
-   ```
-4. Acesse: `http://localhost/type-quest/`
+Observação: para que as URLs sejam calculadas corretamente, coloque os arquivos do projeto diretamente em `C:\xampp\htdocs\type-quest\` (ou seja, `index.php` deve ficar em `C:\xampp\htdocs\type-quest\index.php`).
 
-> O arquivo `src/config/config.php` detecta automaticamente o ambiente (Docker vs XAMPP) e ajusta as credenciais.
+Passos:
+
+1. Copie os arquivos do projeto para o XAMPP. Pelo PowerShell, estando na raiz do repositório:
+
+```powershell
+Copy-Item -Path .\src\* -Destination C:\xampp\htdocs\type-quest -Recurse
+```
+
+2. Crie o arquivo `.env` na raiz do site (copie o exemplo e edite as variáveis):
+
+```powershell
+Copy-Item C:\xampp\htdocs\type-quest\.env.example C:\xampp\htdocs\type-quest\.env
+# Edite C:\xampp\htdocs\type-quest\.env para ajustar DB_USER/DB_PASS conforme seu MySQL
+```
+
+Exemplo mínimo para XAMPP (ajuste conforme seu ambiente):
+
+```
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=typequest
+DB_USER=root
+DB_PASS=
+```
+
+3. Inicie o Apache e o MySQL no XAMPP Control Panel.
+
+4. Importe o schema e os seeds. Importante: `schema.sql` já cria o banco `typequest` e define `USE typequest`, então basta importar o arquivo do schema; em seguida importe os seeds.
+
+```powershell
+# Importa o schema (cria o banco e as tabelas)
+mysql -u root -p < "C:\xampp\htdocs\type-quest\database\schema.sql"
+# Importa os dados iniciais (seeds)
+mysql -u root -p typequest < "C:\xampp\htdocs\type-quest\database\seeds.sql"
+```
+
+5. Verifique no `php.ini` (geralmente `C:\xampp\php\php.ini`) que a extensão `pdo_mysql` está habilitada; reinicie o Apache após qualquer alteração.
+
+6. Acesse no navegador:
+
+```
+http://localhost/type-quest/
+```
+
+O arquivo `src/config/config.php` carrega variáveis do `.env` quando o ambiente não é Docker, portanto é essencial que o `.env` esteja na raiz onde você colocou os arquivos no `htdocs`.
 
 ---
 
